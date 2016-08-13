@@ -25,6 +25,16 @@ class Pokemon {
     private var _nextEvoId: String!
     private var _nextEvoLvl: String!
     
+    private var _moves: [PokemonMoves]!
+    
+    var moves: [PokemonMoves] {
+        if _moves == nil {
+         _moves = []
+        }
+        return _moves
+    }
+    
+    
     var description: String {
         
         if _description == nil {
@@ -170,7 +180,6 @@ class Pokemon {
                                 
                                 if let description = descDict["description"] as? String {
                                     self._description = description
-                                   print(self._description)
                                 }
                             }
                             
@@ -199,9 +208,38 @@ class Pokemon {
                             if let lvl = evolution[0]["level"] as? Int {
                                 self._nextEvoLvl = "\(lvl)"
                                 }
+                            
+                        
                             }
                         }
                     }
+                }
+                
+                if let moves = dict["moves"] as? [Dictionary<String, AnyObject>] where moves.count > 0 {
+                    var moveName = ""
+                    
+                    for parsedMove in moves {
+                        if let moveUrl = parsedMove["resource_uri"] {
+                            let nsurl = NSURL(string: "\(URL_BASE)\(moveUrl)")!
+                            Alamofire.request(.GET, nsurl).responseJSON { response in
+                                
+                                let moveResult = response.result
+                                
+                                if let moveDict = moveResult.value as? Dictionary<String, AnyObject> {
+                                    
+                                    if let name = moveDict["name"] as? String {
+                                        moveName = name
+                                    }
+                                }
+                              self._moves.append(PokemonMoves(name: moveName))
+                                
+                                completed()
+                            }
+                        }
+                    }
+                    
+                    
+                    
                 }
             }
         }

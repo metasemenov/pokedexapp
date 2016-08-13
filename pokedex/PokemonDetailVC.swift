@@ -8,9 +8,10 @@
 
 import UIKit
 
-class PokemonDetailVC: UIViewController {
+class PokemonDetailVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var pokemon: Pokemon!
+   
     
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var mainImg: UIImageView!
@@ -24,13 +25,21 @@ class PokemonDetailVC: UIViewController {
     @IBOutlet weak var evoLbl: UILabel!
     @IBOutlet weak var currentEvoImg: UIImageView!
     @IBOutlet weak var nextEvoImg: UIImageView!
+    @IBOutlet weak var MovesView: UIView!
+    @IBOutlet weak var BioView: UIView!
+    @IBOutlet weak var tableView: UITableView!			
+    @IBOutlet weak var segmentControl: UISegmentedControl!
+    
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        MovesView.hidden = true
+        BioView.hidden = false
         nameLbl.text = pokemon.name.capitalizedString
+        tableView.delegate = self
+        tableView.dataSource = self
         
         let img = UIImage(named: "\(pokemon.pokedexId)")
         mainImg.image = img
@@ -39,8 +48,39 @@ class PokemonDetailVC: UIViewController {
         
         pokemon.downloadPokemonDetails { () -> () in
             self.updateUI()
+            self.tableView.reloadData()
         }
     }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        if let cell = tableView.dequeueReusableCellWithIdentifier("MovesCell", forIndexPath: indexPath) as? MovesCell {
+        var move = PokemonMoves(name: "Hit")
+        
+        if pokemon.moves.count > 0 {
+            move = pokemon.moves[indexPath.row]
+        }
+        cell.configureCell(move)
+        return cell
+    } else {
+    return UITableViewCell()
+    }
+}
+
+
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+        
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if pokemon.moves.count > 0 {
+            return pokemon.moves.count
+        }
+        return 1
+    }
+    
+    
     
     func updateUI() {
         descriptionLbl.text = pokemon.description
@@ -71,7 +111,23 @@ class PokemonDetailVC: UIViewController {
    
     @IBAction func backBtnPressed(sender: AnyObject) {
         dismissViewControllerAnimated(true, completion: nil)
+        
     }
     
+    @IBAction func SegmentedControl(sender: UISegmentedControl) {
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            MovesView.hidden = true
+            BioView.hidden = false
+            
+        case 1:
+            MovesView.hidden = false
+            BioView.hidden = true
+            
+        default:
+            break;
+        }
+        
+    }
 
 }
