@@ -31,7 +31,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         initAudio()
         parsePokemonCSV()
+        
     }
+    
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
@@ -142,6 +144,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         view.endEditing(true)
         
+    }
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if (touches.first as? UITouch!) != nil  {
+            view.endEditing(true)
+        }
+        super.touchesBegan(touches, withEvent: event)
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {

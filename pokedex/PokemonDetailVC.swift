@@ -45,6 +45,7 @@ class PokemonDetailVC: UIViewController, UITableViewDataSource, UITableViewDeleg
         mainImg.image = img
         currentEvoImg.image = img
         
+        tableView.allowsSelection = false
         
         pokemon.downloadPokemonDetails { () -> () in
             self.updateUI()
@@ -67,6 +68,8 @@ class PokemonDetailVC: UIViewController, UITableViewDataSource, UITableViewDeleg
     }
 }
 
+    
+    
 
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
